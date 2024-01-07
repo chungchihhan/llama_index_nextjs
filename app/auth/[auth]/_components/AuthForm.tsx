@@ -73,7 +73,7 @@ function AuthForm({
       email,
       username,
       password,
-      callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}`,
+      callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/MainPage`,
       redirect: false,
     });
     if (result?.url) {
