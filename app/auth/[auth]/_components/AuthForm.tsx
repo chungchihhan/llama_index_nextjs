@@ -73,11 +73,11 @@ function AuthForm({
       email,
       username,
       password,
-      callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/MainPage`,
+      // callbackUrl: `${publicEnv.NEXT_PUBLIC_BASE_URL}/MainPage`,
       redirect: false,
     });
-    if (result?.url) {
-      router.push(result.url);
+    if (result?.ok) {
+      router.push("/MainPage");
     }
   };
   const router = useRouter();
