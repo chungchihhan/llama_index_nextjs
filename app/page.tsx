@@ -7,7 +7,7 @@ export default function Home() {
       {/* <Header /> */}
       <h1 className="text-5xl font-bold text-gray-800">ISDM chatbot</h1>
       <h1 className="text-mg font-bold text-gray-800">
-        "I am a chatbot about smart manufacturing"
+        &quot;I am a chatbot about smart manufacturing&quot;
       </h1>
       <Link href="/auth/signin">
         <div className="p-4 mt-5 rounded-2xl text-gray-800 text-3xl hover:text-blue-800 transition duration-100 ease-in-out shadow-md hover:shadow-lg">
