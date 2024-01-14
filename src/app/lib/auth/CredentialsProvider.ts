@@ -3,8 +3,8 @@ import CredentialsProvider from "next-auth/providers/credentials";
 import bcrypt from "bcryptjs";
 import { eq } from "drizzle-orm";
 
-import { db } from "@/app/db";
-import { usersTable } from "@/app/db/schema";
+import { db } from "@/src/app/db";
+import { usersTable } from "@/src/app/db/schema";
 import { authSchema } from "@/validators/auth";
 
 // import router from "next/navigation";
