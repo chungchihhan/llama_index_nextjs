@@ -8,9 +8,9 @@ import { useSearchParams } from "next/navigation";
 import { useRouter } from "next/navigation";
 
 // Run: npx shadcn-ui@latest add button
-import { Button } from "@/src/components/ui/button";
-import { Card, CardContent } from "@/src/components/ui/card";
-import { publicEnv } from "@/src/app/lib/env/public";
+import { Button } from "@/components/ui/button";
+import { Card, CardContent } from "@/components/ui/card";
+import { publicEnv } from "@/app/lib/env/public";
 
 import AuthInput from "./AuthInput";
 
