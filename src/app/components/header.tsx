@@ -1,4 +1,5 @@
 import Image from "next/image";
+import Link from "next/link";
 
 export default function Header() {
   return (
@@ -9,12 +10,14 @@ export default function Header() {
         {/* <code className="font-mono font-bold">app/page.tsx</code> */}
       </p>
       <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
-        <a
+        <div
           // href="https://www.llamaindex.ai/"
           className="flex items-center justify-center font-nunito text-lg font-bold gap-2"
         >
           {/* <span>Built by LlamaIndex</span> */}
-          <span>smart manufacturing</span>
+          <Link href="/">
+            <span>smart manufacturing</span>
+          </Link>
           <Image
             className="rounded-xl"
             src="/smart-manufacturing.png"
@@ -23,7 +26,7 @@ export default function Header() {
             height={40}
             priority
           />
-        </a>
+        </div>
       </div>
     </div>
   );
