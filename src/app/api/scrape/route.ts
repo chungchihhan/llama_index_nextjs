@@ -1,11 +1,15 @@
 import { NextResponse, NextRequest } from "next/server";
 import cheerio from "cheerio";
-import fetch from "node-fetch"; // Make sure node-fetch is installed
+import fetch from "node-fetch";
 
-export async function GET(req: NextRequest) {
+export async function POST(req: NextRequest) {
   try {
     // Fetch the HTML content of the main web page
-    const mainResponse = await fetch("https://www.fanuc.com/");
+    const { url } = await req.json();
+    if (!url) {
+      throw new Error("URL is required");
+    }
+    const mainResponse = await fetch(url);
     const mainHtml = await mainResponse.text();
     const $main = cheerio.load(mainHtml);
 
