@@ -8,14 +8,16 @@ import {
   ReactPortal,
   useState,
 } from "react";
-import Header from "@/app/components/header";
-import ChatSection from "../components/chat-section";
+// import Header from "@/app/components/header";
+// import ChatSection from "../components/chat-section";
 
 export default function Home() {
   const [scrapedData, setScrapedData] = useState<any>(null);
   const [url, setUrl] = useState("");
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
+  const [chatQuery, setChatQuery] = useState<string>("");
+  const [chatanswer, setChatanswer] = useState<string>("");
 
   const handleScrape = async () => {
     if (!url) {
@@ -36,6 +38,7 @@ export default function Home() {
       console.log("Scraping complete!");
       const data = await response.json();
       setScrapedData(data);
+      console.log("Scraped data:", data);
     } catch (error) {
       console.error("Error during scraping:", error);
       setError("無法抓取數據，請重試");
@@ -43,18 +46,34 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  const handleSave = () => {
-    if (scrapedData) {
-      localStorage.setItem("scrapedData", JSON.stringify(scrapedData));
+  const handleScrapeChat = async () => {
+    if (!scrapedData) {
+      alert("請先抓取數據");
+      return;
     }
-  };
-
-  const handlePreview = () => {
-    const data = localStorage.getItem("scrapedData");
-    if (data) {
-      // Logic to display the data
-      console.log("Preview Data:", JSON.parse(data));
+    setIsLoading(true);
+    setError(null);
+    try {
+      console.log("Sending scraped data to /api/scrapeChat...");
+      const response = await fetch("/api/scrapeChat", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+        },
+        body: JSON.stringify({
+          content: scrapedData.pagesData,
+          query: chatQuery,
+        }),
+      });
+      console.log("Request to /api/scrapeChat completed!");
+      const res = await response.json();
+      console.log("Response data:", res);
+      setChatanswer(res.chatResponse);
+    } catch (error) {
+      console.error("Error during sending scraped data:", error);
+      setError("無法發送數據，請重試");
     }
+    setIsLoading(false);
   };
 
   return (
@@ -69,8 +88,15 @@ export default function Home() {
         className="p-2 border border-gray-300 rounded"
       />
       <button onClick={handleScrape}>Scrape Data</button>
-      <button onClick={handleSave}>Save Data</button>
-      <button onClick={handlePreview}>Preview Data</button>
+      <input
+        type="text"
+        value={chatQuery}
+        onChange={(e) => setChatQuery(e.target.value)}
+        placeholder="請輸入一個問題"
+        className="p-2 border border-gray-300 rounded"
+      />
+      <button onClick={handleScrapeChat}>get Chat result</button>
+      <div>{chatanswer}</div>
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {scrapedData && (
