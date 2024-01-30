@@ -1,7 +1,3 @@
-// pages/api/chatbot.ts
-
-import fs from "fs";
-import path from "path";
 import {
   ContextChatEngine,
   Document,
@@ -9,6 +5,7 @@ import {
   VectorStoreIndex,
 } from "llamaindex";
 import { NextRequest, NextResponse } from "next/server";
+import { OpenAIStream, StreamingTextResponse } from "ai";
 
 export async function POST(req: NextRequest, res: NextResponse) {
   if (req.method === "POST") {
@@ -28,19 +25,22 @@ export async function POST(req: NextRequest, res: NextResponse) {
       const chatEngine = new ContextChatEngine({ retriever });
       const stream = await chatEngine.chat(query, undefined, true);
 
-      // Process the query
-      // const stream = await chatEngine.chat({ message: query, stream: true });
-      let chatResponse = "";
-      for await (const chunk of stream) {
-        chatResponse += chunk;
-      }
-
-      // Send the response
-      return new NextResponse(JSON.stringify({ chatResponse }), {
-        status: 200,
-        headers: {
-          "Content-Type": "application/json",
+      // 創建一個可讀流
+      const readableStream = new ReadableStream({
+        start(controller) {
+          // 這裡處理您的串流邏輯
+          (async () => {
+            for await (const chunk of stream) {
+              controller.enqueue(chunk);
+            }
+            controller.close();
+          })();
         },
+      });
+
+      // 使用可讀流作為回應
+      return new Response(readableStream, {
+        headers: { "Content-Type": "text/plain" },
       });
     } catch (error) {
       console.error(error);

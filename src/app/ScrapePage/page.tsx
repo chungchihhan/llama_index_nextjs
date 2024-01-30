@@ -66,9 +66,37 @@ export default function Home() {
         }),
       });
       console.log("Request to /api/scrapeChat completed!");
-      const res = await response.json();
-      console.log("Response data:", res);
-      setChatanswer(res.chatResponse);
+      if (response.body) {
+        const reader = response.body.getReader();
+        let chatResponse = "";
+
+        // 讀取串流數據
+        const processText = async ({
+          done,
+          value,
+        }: ReadableStreamReadResult<Uint8Array>): Promise<void> => {
+          if (done) {
+            console.log("Stream complete");
+            setChatanswer(chatResponse);
+            setIsLoading(false);
+            return;
+          }
+
+          // 將每個串流塊添加到 chatResponse
+          const chunk = new TextDecoder("utf-8").decode(value);
+          chatResponse += chunk;
+          setChatanswer(chatResponse);
+
+          // 讀取下一個串流塊
+          return reader.read().then(processText);
+        };
+
+        reader.read().then(processText);
+      } else {
+        console.error("No response body");
+        setError("無回應體");
+        setIsLoading(false);
+      }
     } catch (error) {
       console.error("Error during sending scraped data:", error);
       setError("無法發送數據，請重試");
