@@ -10,6 +10,11 @@ import {
 } from "react";
 // import Header from "@/app/components/header";
 // import ChatSection from "../components/chat-section";
+import { Button } from "@/app/components/ui/button";
+import { useCopyToClipboard } from "@/app/components/ui/chat/use-copy-to-clipboard";
+import ChatAnswer from "../components/ui/chat/chat-answer";
+import ChatAvatar from "@/app/components/ui/chat/chat-avatar";
+import { Copy, Check } from "lucide-react";
 
 export default function Home() {
   const [scrapedData, setScrapedData] = useState<any>(null);
@@ -18,6 +23,7 @@ export default function Home() {
   const [error, setError] = useState<string | null>(null);
   const [chatQuery, setChatQuery] = useState<string>("");
   const [chatanswer, setChatanswer] = useState<string>("");
+  const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
 
   const handleScrape = async () => {
     if (!url) {
@@ -105,26 +111,68 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col items-center gap-10 p-24 background-gradient">
+    <main className="flex min-h-screen flex-col gap-3 p-24 background-gradient">
       {/* <Header /> */}
       {/* <ChatSection /> */}
-      <input
-        type="text"
-        value={url}
-        onChange={(e) => setUrl(e.target.value)}
-        placeholder="請輸入一個有效的 URL"
-        className="p-2 border border-gray-300 rounded"
-      />
-      <button onClick={handleScrape}>Scrape Data</button>
-      <input
-        type="text"
-        value={chatQuery}
-        onChange={(e) => setChatQuery(e.target.value)}
-        placeholder="請輸入一個問題"
-        className="p-2 border border-gray-300 rounded"
-      />
-      <button onClick={handleScrapeChat}>get Chat result</button>
-      <div>{chatanswer}</div>
+      <div className="flex gap-2">
+        <div className="flex items-center p-2">
+          <ChatAvatar role="user" />
+        </div>
+        <input
+          type="text"
+          value={url}
+          onChange={(e) => setUrl(e.target.value)}
+          placeholder="請輸入一個有效的 URL"
+          className="p-2 border border-gray-300 rounded-xl flex-grow"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleScrape();
+            }
+          }}
+        />
+        <Button
+          onClick={() => copyToClipboard(url)}
+          size="icon"
+          variant="ghost"
+          className="h-8 w-8 group-hover:opacity-100 self-center"
+        >
+          <Copy className="h-4 w-4" />
+        </Button>
+        <button className="min-w-32" onClick={handleScrape}>
+          Scrape Data
+        </button>
+      </div>
+      <div className="flex gap-2">
+        <div className="flex items-center p-2">
+          <ChatAvatar role="user" />
+        </div>
+        <input
+          type="text"
+          value={chatQuery}
+          onChange={(e) => setChatQuery(e.target.value)}
+          placeholder="請輸入一個問題"
+          className="p-2 border border-gray-300 rounded-xl flex-grow"
+          onKeyDown={(e) => {
+            if (e.key === "Enter") {
+              handleScrapeChat();
+            }
+          }}
+        />
+        <Button
+          onClick={() => copyToClipboard(chatQuery)}
+          size="icon"
+          variant="ghost"
+          className="h-8 w-8 group-hover:opacity-100 self-center"
+        >
+          <Copy className="h-4 w-4" />
+        </Button>
+        <button className="min-w-32" onClick={handleScrapeChat}>
+          Chat Result
+        </button>
+      </div>
+      <div className="pl-2">
+        {chatanswer && <ChatAnswer chatAnswer={chatanswer} role="chatbot" />}
+      </div>
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {scrapedData && (
