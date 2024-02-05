@@ -52,7 +52,17 @@ export default function Home() {
     setIsLoading(false);
   };
 
-  const handleScrapeChat = async () => {
+  const convertDataToText = (data: any[]) => {
+    return data
+      .map((page: { link: any; pageText: any }, index: number) => {
+        return `Page ${index + 1} URL: ${page.link}\nPage Text: ${
+          page.pageText
+        }\n\n`;
+      })
+      .join("");
+  };
+
+  const handleSaveIndex = async () => {
     if (!scrapedData) {
       alert("請先抓取數據");
       return;
@@ -60,51 +70,26 @@ export default function Home() {
     setIsLoading(true);
     setError(null);
     try {
-      console.log("Sending scraped data to /api/scrapeChat...");
-      const response = await fetch("/api/scrapeChat", {
+      console.log("Sending scraped data to /api/saveIndex...");
+      const response = await fetch("/api/saveIndex", {
         method: "POST",
         headers: {
           "Content-Type": "application/json",
         },
         body: JSON.stringify({
-          content: scrapedData.pagesData,
-          query: chatQuery,
+          content: convertDataToText(scrapedData.pagesData),
         }),
       });
-      console.log("Request to /api/scrapeChat completed!");
+      console.log("Request to /api/saveIndex completed!");
       if (response.body) {
-        const reader = response.body.getReader();
-        let chatResponse = "";
-
-        // 讀取串流數據
-        const processText = async ({
-          done,
-          value,
-        }: ReadableStreamReadResult<Uint8Array>): Promise<void> => {
-          if (done) {
-            console.log("Stream complete");
-            setChatanswer(chatResponse);
-            setIsLoading(false);
-            return;
-          }
-
-          // 將每個串流塊添加到 chatResponse
-          const chunk = new TextDecoder("utf-8").decode(value);
-          chatResponse += chunk;
-          setChatanswer(chatResponse);
-
-          // 讀取下一個串流塊
-          return reader.read().then(processText);
-        };
-
-        reader.read().then(processText);
+        return response.json();
       } else {
         console.error("No response body");
         setError("無回應體");
         setIsLoading(false);
       }
     } catch (error) {
-      console.error("Error during sending scraped data:", error);
+      console.error("Error during saving index:", error);
       setError("無法發送數據，請重試");
     }
     setIsLoading(false);
@@ -143,7 +128,7 @@ export default function Home() {
         </button>
       </div>
       <div className="flex gap-2">
-        <div className="flex items-center p-2">
+        {/* <div className="flex items-center p-2">
           <ChatAvatar role="user" />
         </div>
         <input
@@ -154,7 +139,7 @@ export default function Home() {
           className="p-2 border border-gray-300 rounded-xl flex-grow"
           onKeyDown={(e) => {
             if (e.key === "Enter") {
-              handleScrapeChat();
+              handleSaveIndex();
             }
           }}
         />
@@ -165,9 +150,9 @@ export default function Home() {
           className="h-8 w-8 group-hover:opacity-100 self-center"
         >
           <Copy className="h-4 w-4" />
-        </Button>
-        <button className="min-w-32" onClick={handleScrapeChat}>
-          Chat Result
+        </Button> */}
+        <button className="min-w-32" onClick={handleSaveIndex}>
+          Save Index
         </button>
       </div>
       <div className="pl-2">
