@@ -1,10 +1,4 @@
-import {
-  ContextChatEngine,
-  Document,
-  serviceContextFromDefaults,
-  storageContextFromDefaults,
-  VectorStoreIndex,
-} from "llamaindex";
+import { storageContextFromDefaults, VectorStoreIndex } from "llamaindex";
 import { NextRequest, NextResponse } from "next/server";
 
 export async function POST(req: NextRequest, res: NextResponse) {
@@ -21,9 +15,10 @@ export async function POST(req: NextRequest, res: NextResponse) {
       });
       const loadedQueryEngine = loadedIndex.asQueryEngine();
       const loadedResponse = await loadedQueryEngine.query(query);
-      console.log(loadedResponse.toString());
+      // console.log(loadedResponse.response);
+      const queryResponse = loadedResponse.response;
 
-      return new Response(JSON.stringify({ loadedResponse }), {
+      return new Response(JSON.stringify({ queryResponse }), {
         status: 200,
         headers: {
           "Content-Type": "application/json",
