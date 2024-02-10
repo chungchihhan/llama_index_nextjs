@@ -2,13 +2,31 @@ import { NextResponse, NextRequest } from "next/server";
 import cheerio from "cheerio";
 import fetch from "node-fetch";
 
+function isValidUrl(urlLink: string) {
+  try {
+    new URL(urlLink);
+    return true;
+  } catch (e) {
+    return false;
+  }
+}
+
 export async function POST(req: NextRequest) {
   try {
     // Fetch the HTML content of the main web page
     const { url } = await req.json();
-    if (!url) {
-      throw new Error("URL is required");
+    if (!url || !isValidUrl(url)) {
+      return new NextResponse(
+        JSON.stringify({ error: "the link is unvalid" }),
+        {
+          status: 400,
+          headers: {
+            "Content-Type": "application/json",
+          },
+        }
+      );
     }
+
     const mainResponse = await fetch(url);
     const mainHtml = await mainResponse.text();
     const $main = cheerio.load(mainHtml);

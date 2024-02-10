@@ -8,13 +8,17 @@ import {
   ReactPortal,
   useState,
 } from "react";
-// import Header from "@/app/components/header";
-// import ChatSection from "../components/chat-section";
+
 import { Button } from "@/app/components/ui/button";
 import { useCopyToClipboard } from "@/app/components/ui/chat/use-copy-to-clipboard";
-import ChatAnswer from "@/app/components/ui/chat/chat-answer";
+
 import ChatAvatar from "@/app/components/ui/chat/chat-avatar";
 import { Copy, Check } from "lucide-react";
+
+interface PageData {
+  link: string | undefined;
+  pageText: string | undefined;
+}
 
 export default function Home() {
   const [scrapedData, setScrapedData] = useState<any>(null);
@@ -24,6 +28,44 @@ export default function Home() {
   const [chatQuery, setChatQuery] = useState<string>("");
   const [chatanswer, setChatanswer] = useState<string>("");
   const { isCopied, copyToClipboard } = useCopyToClipboard({ timeout: 2000 });
+
+  const convertDataToCSV = (data: PageData[]) => {
+    const headers = "links,contents\n";
+    const rows = data
+      .map(
+        (page: PageData) =>
+          `"${page.link?.replace(/"/g, '""') || ""}","${
+            page.pageText?.replace(/"/g, '""') || ""
+          }"`
+      )
+      .join("\n");
+    return headers + rows;
+  };
+
+  const downloadCSV = (
+    csvString: string,
+    filename: string = "scraped-data.csv"
+  ) => {
+    const blob = new Blob([csvString], { type: "text/csv;charset=utf-8;" });
+    const url = URL.createObjectURL(blob);
+    const link = document.createElement("a");
+    link.setAttribute("href", url);
+    link.setAttribute("download", filename);
+    link.style.visibility = "hidden";
+    document.body.appendChild(link);
+    link.click();
+    document.body.removeChild(link);
+    console.log("CSV downloaded");
+  };
+
+  const handleDownloadCSV = (): void => {
+    if (!scrapedData) {
+      alert("請先抓取數據");
+      return;
+    }
+    const csvString = convertDataToCSV(scrapedData.pagesData);
+    downloadCSV(csvString);
+  };
 
   const handleScrape = async () => {
     if (!url) {
@@ -41,10 +83,14 @@ export default function Home() {
         },
         body: JSON.stringify({ url }),
       });
-      console.log("Scraping complete!");
-      const data = await response.json();
-      setScrapedData(data);
-      console.log("Scraped data:", data.pagesData);
+      if (!response.ok) {
+        alert("無法抓取數據，請重試");
+      } else {
+        console.log("Scraping complete!");
+        const data = await response.json();
+        setScrapedData(data);
+        console.log("Scraped data:", data.pagesData);
+      }
     } catch (error) {
       console.error("Error during scraping:", error);
       setError("無法抓取數據，請重試");
@@ -93,6 +139,7 @@ export default function Home() {
       setError("無法發送數據，請重試");
     }
     setIsLoading(false);
+    alert("Index is saved!");
   };
 
   return (
@@ -101,38 +148,50 @@ export default function Home() {
         <div className="flex items-center p-2">
           <ChatAvatar role="user" />
         </div>
-        <input
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="請輸入一個有效的 URL"
-          className="p-2 border border-gray-300 rounded-xl flex-grow"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleScrape();
-            }
-          }}
-        />
-        <Button
-          onClick={() => copyToClipboard(url)}
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 group-hover:opacity-100 self-center"
-        >
-          <Copy className="h-4 w-4" />
-        </Button>
-        <button className="min-w-32" onClick={handleScrape}>
-          Start Scraping
-        </button>
+        <div className="p-2 border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-5">
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="請輸入一個有效的 URL"
+            className="flex-grow"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                (e.target as HTMLInputElement).blur();
+                handleScrape();
+              }
+            }}
+          />
+          <Button
+            onClick={() => copyToClipboard(url)}
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 group-hover:opacity-100 self-center"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+          <button
+            className="hover:bg-slate-100 rounded-lg px-3"
+            onClick={handleScrape}
+          >
+            Start Scraping
+          </button>
+        </div>
       </div>
-      {isLoading && <p>Loading...</p>}
+      {isLoading && <p className="self-center py-3">Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
       {scrapedData && (
-        <div className="flex flex-col gap-3">
-          <div className="flex bg-white p-4 rounded-lg">
-            <span className="flex-grow self-center">Scraped Data:</span>
+        <div className="flex flex-col gap-3 bg-slate-400 bg-opacity-25 p-3 rounded-xl">
+          <div className="flex bg-white p-4 rounded-lg gap-3">
+            <p className="flex-grow self-center">Scraped Data:</p>
             <button
-              className="min-w-24 bg-slate-200 h-8 rounded-lg"
+              className="min-w-24 bg-slate-200 h-8 rounded-lg hover:bg-slate-300"
+              onClick={handleDownloadCSV}
+            >
+              Save CSV
+            </button>
+            <button
+              className="min-w-24 bg-slate-200 h-8 rounded-lg hover:bg-slate-300"
               onClick={handleSaveIndex}
             >
               Save Index
@@ -154,7 +213,14 @@ export default function Home() {
                 {scrapedData.pagesData.map(
                   (page: { link: string; pageText: string }, index: Key) => (
                     <tr className="bg-white" key={index}>
-                      <td className="px-6 py-4">{page.link}</td>
+                      <div className="px-6 py-4">
+                        <a
+                          href={page.link}
+                          className="hover:text-blue-400 underline"
+                        >
+                          {page.link}
+                        </a>
+                      </div>
                       <td className="px-6 py-4 ">
                         <p className="overflow-hidden h-20">{page.pageText}</p>
                       </td>
