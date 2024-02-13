@@ -85,29 +85,35 @@ export default function Home() {
         <div className="flex items-center p-2">
           <ChatAvatar role="user" />
         </div>
-        <input
-          type="text"
-          value={chatQuery}
-          onChange={(e) => setChatQuery(e.target.value)}
-          placeholder="請輸入一個問題"
-          className="p-2 border border-gray-300 rounded-xl flex-grow"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleChat();
-            }
-          }}
-        />
-        <Button
-          onClick={() => copyToClipboard(chatQuery)}
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 group-hover:opacity-100 self-center"
-        >
-          <Copy className="h-4 w-4" />
-        </Button>
-        <button className="min-w-32" onClick={handleChat}>
-          Chat Result
-        </button>
+        <div className="border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-5">
+          <input
+            type="text"
+            value={chatQuery}
+            onChange={(e) => setChatQuery(e.target.value)}
+            placeholder="請輸入一個問題"
+            className="flex-grow pl-3 rounded-xl"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                (e.target as HTMLInputElement).blur();
+                handleChat();
+              }
+            }}
+          />
+          <Button
+            onClick={() => copyToClipboard(chatQuery)}
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 group-hover:opacity-100 self-center"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+          <button
+            className="hover:bg-slate-100 rounded-lg my-2"
+            onClick={handleChat}
+          >
+            Start Asking
+          </button>
+        </div>
       </div>
       <div className="pl-2">
         {chatanswer && <ChatAnswer chatAnswer={chatanswer} role="chatbot" />}

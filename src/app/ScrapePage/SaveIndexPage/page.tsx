@@ -143,18 +143,18 @@ export default function Home() {
   };
 
   return (
-    <main className="flex flex-col gap-3 p-24 background-gradient ">
+    <main className="flex min-h-screen flex-col gap-3 p-24 background-gradient ">
       <div className="flex gap-2">
         <div className="flex items-center p-2">
           <ChatAvatar role="user" />
         </div>
-        <div className="p-2 border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-5">
+        <div className="border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-5">
           <input
             type="text"
             value={url}
             onChange={(e) => setUrl(e.target.value)}
             placeholder="請輸入一個有效的 URL"
-            className="flex-grow"
+            className="flex-grow pl-3 rounded-xl"
             onKeyDown={(e) => {
               if (e.key === "Enter") {
                 (e.target as HTMLInputElement).blur();
@@ -171,7 +171,7 @@ export default function Home() {
             <Copy className="h-4 w-4" />
           </Button>
           <button
-            className="hover:bg-slate-100 rounded-lg px-3"
+            className="hover:bg-slate-100 rounded-lg my-2"
             onClick={handleScrape}
           >
             Start Scraping
