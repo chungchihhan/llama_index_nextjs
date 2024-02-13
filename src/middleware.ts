@@ -3,4 +3,11 @@
 export { default } from "next-auth/middleware";
 
 //add path that you want to include in the middleware
-export const config = { matcher: ["/MainPage"] };
+export const config = {
+  matcher: [
+    "/MainPage",
+    "/ScrapePage",
+    "/ScrapePage/SaveIndexPage",
+    "/ScrapePage/LoadIndexPage",
+  ],
+};

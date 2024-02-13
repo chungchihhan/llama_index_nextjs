@@ -14,6 +14,8 @@ import { useCopyToClipboard } from "@/app/components/ui/chat/use-copy-to-clipboa
 
 import ChatAvatar from "@/app/components/ui/chat/chat-avatar";
 import { Copy, Check } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 interface PageData {
   link: string | undefined;
@@ -127,9 +129,7 @@ export default function Home() {
         }),
       });
       console.log("Request to /api/saveIndex completed!");
-      if (response.body) {
-        return response.json();
-      } else {
+      if (!response.ok) {
         console.error("No response body");
         setError("無回應體");
         setIsLoading(false);
@@ -144,6 +144,35 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col gap-3 p-24 background-gradient ">
+      <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex">
+        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <div className="flex items-center justify-center font-nunito text-lg font-bold gap-4 ">
+            <Link href="/">
+              <Image
+                className="rounded-xl m-2"
+                src="/smart-manufacturing.png"
+                alt="Llama Logo"
+                width={32}
+                height={32}
+                priority
+              />
+            </Link>
+            <span>Save the scraped data here</span>
+          </div>
+        </div>
+        <div className="flex gap-3">
+          <Link href="/ScrapePage">
+            <p className="flex justify-center hover:bg-slate-100 p-2 rounded-lg ">
+              {"<"} Back to realtime-mode
+            </p>
+          </Link>
+          <Link href="/ScrapePage/LoadIndexPage">
+            <p className="flex justify-center hover:bg-slate-100 p-2 rounded-lg ">
+              Talk to saved data {">"}
+            </p>
+          </Link>
+        </div>
+      </div>
       <div className="flex gap-2">
         <div className="flex items-center p-2">
           <ChatAvatar role="user" />

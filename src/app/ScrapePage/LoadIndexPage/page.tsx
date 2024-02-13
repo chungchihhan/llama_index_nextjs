@@ -14,6 +14,8 @@ import { useCopyToClipboard } from "@/app/components/ui/chat/use-copy-to-clipboa
 import ChatAnswer from "@/app/components/ui/chat/chat-answer";
 import ChatAvatar from "@/app/components/ui/chat/chat-avatar";
 import { Copy, Check } from "lucide-react";
+import Link from "next/link";
+import Image from "next/image";
 
 export default function Home() {
   const [isLoading, setIsLoading] = useState(false);
@@ -81,6 +83,30 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col gap-3 p-24 background-gradient">
+      <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex">
+        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <div className="flex items-center justify-center font-nunito text-lg font-bold gap-4">
+            <Link href="/">
+              <Image
+                className="rounded-xl m-2"
+                src="/smart-manufacturing.png"
+                alt="Llama Logo"
+                width={32}
+                height={32}
+                priority
+              />
+            </Link>
+            <span>Ask any questions about scraped data!</span>
+          </div>
+        </div>
+        <div>
+          <Link href="/ScrapePage/SaveIndexPage">
+            <p className="flex justify-center hover:bg-slate-100 p-2 rounded-lg ">
+              {"<"} Back to Save Index Page
+            </p>
+          </Link>
+        </div>
+      </div>
       <div className="flex gap-2">
         <div className="flex items-center p-2">
           <ChatAvatar role="user" />

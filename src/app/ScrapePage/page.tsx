@@ -8,8 +8,10 @@ import {
   ReactPortal,
   useState,
 } from "react";
-// import Header from "@/app/components/header";
+import Header from "@/app/components/header";
 // import ChatSection from "../components/chat-section";
+import Link from "next/link";
+import Image from "next/image";
 import { Button } from "@/app/components/ui/button";
 import { useCopyToClipboard } from "@/app/components/ui/chat/use-copy-to-clipboard";
 import ChatAnswer from "@/app/components/ui/chat/chat-answer";
@@ -112,63 +114,97 @@ export default function Home() {
 
   return (
     <main className="flex min-h-screen flex-col gap-3 p-24 background-gradient">
-      {/* <Header /> */}
-      {/* <ChatSection /> */}
-      <div className="flex gap-2">
-        <div className="flex items-center p-2">
-          <ChatAvatar role="user" />
+      <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex">
+        <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
+          <div className="flex items-center justify-center font-nunito text-lg font-bold gap-4">
+            <Link href="/">
+              <Image
+                className="rounded-xl m-2"
+                src="/smart-manufacturing.png"
+                alt="Llama Logo"
+                width={32}
+                height={32}
+                priority
+              />
+            </Link>
+            <span>
+              Scrape the website with the link you provide. Ask any question!
+            </span>
+          </div>
         </div>
-        <input
-          type="text"
-          value={url}
-          onChange={(e) => setUrl(e.target.value)}
-          placeholder="請輸入一個有效的 URL"
-          className="p-2 border border-gray-300 rounded-xl flex-grow"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleScrape();
-            }
-          }}
-        />
-        <Button
-          onClick={() => copyToClipboard(url)}
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 group-hover:opacity-100 self-center"
-        >
-          <Copy className="h-4 w-4" />
-        </Button>
-        <button className="min-w-32" onClick={handleScrape}>
-          Scrape Data
-        </button>
+        <div>
+          <Link href="/ScrapePage/SaveIndexPage">
+            <p className="flex justify-center hover:bg-slate-100 p-2 rounded-lg ">
+              non-realtime mode {">"}
+            </p>
+          </Link>
+        </div>
       </div>
       <div className="flex gap-2">
         <div className="flex items-center p-2">
           <ChatAvatar role="user" />
         </div>
-        <input
-          type="text"
-          value={chatQuery}
-          onChange={(e) => setChatQuery(e.target.value)}
-          placeholder="請輸入一個問題"
-          className="p-2 border border-gray-300 rounded-xl flex-grow"
-          onKeyDown={(e) => {
-            if (e.key === "Enter") {
-              handleScrapeChat();
-            }
-          }}
-        />
-        <Button
-          onClick={() => copyToClipboard(chatQuery)}
-          size="icon"
-          variant="ghost"
-          className="h-8 w-8 group-hover:opacity-100 self-center"
-        >
-          <Copy className="h-4 w-4" />
-        </Button>
-        <button className="min-w-32" onClick={handleScrapeChat}>
-          Chat Result
-        </button>
+        <div className="border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-5">
+          <input
+            type="text"
+            value={url}
+            onChange={(e) => setUrl(e.target.value)}
+            placeholder="請輸入一個有效的 URL"
+            className="flex-grow pl-3 rounded-xl"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleScrape();
+              }
+            }}
+          />
+          <Button
+            onClick={() => copyToClipboard(url)}
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 group-hover:opacity-100 self-center"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+          <button
+            className="hover:bg-slate-100 rounded-lg my-2 min-w-28"
+            onClick={handleScrape}
+          >
+            Start Scraping
+          </button>
+        </div>
+      </div>
+      <div className="flex gap-2">
+        <div className="flex items-center p-2">
+          <ChatAvatar role="user" />
+        </div>
+        <div className="border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-5">
+          <input
+            type="text"
+            value={chatQuery}
+            onChange={(e) => setChatQuery(e.target.value)}
+            placeholder="請輸入一個問題"
+            className="flex-grow pl-3 rounded-xl"
+            onKeyDown={(e) => {
+              if (e.key === "Enter") {
+                handleScrapeChat();
+              }
+            }}
+          />
+          <Button
+            onClick={() => copyToClipboard(chatQuery)}
+            size="icon"
+            variant="ghost"
+            className="h-8 w-8 group-hover:opacity-100 self-center"
+          >
+            <Copy className="h-4 w-4" />
+          </Button>
+          <button
+            className="min-w-28 hover:bg-slate-100 rounded-lg my-2"
+            onClick={handleScrapeChat}
+          >
+            Start Asking
+          </button>
+        </div>
       </div>
       <div className="pl-2">
         {chatanswer && <ChatAnswer chatAnswer={chatanswer} role="chatbot" />}
