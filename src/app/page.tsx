@@ -26,11 +26,18 @@ export default async function Home() {
               </p>
               <p className="">How can I help you today!</p>
             </div>
-            <Link href="/MainPage">
-              <div className="p-4 rounded-2xl text-gray-800 font-bold text-xl hover:text-blue-800 transition duration-100 ease-in-out hover:shadow-lg">
-                我想問問題!
-              </div>
-            </Link>
+            <div className="flex">
+              <Link href="/MainPage">
+                <div className="flex p-4 rounded-2xl text-gray-800 font-bold text-xl hover:text-blue-800 transition duration-100 ease-in-out hover:shadow-lg">
+                  我想問問題!
+                </div>
+              </Link>
+              <Link href="/ScrapePage">
+                <div className="flex p-4 rounded-2xl text-gray-800 font-bold text-xl hover:text-blue-800 transition duration-100 ease-in-out hover:shadow-lg">
+                  我想問網站!
+                </div>
+              </Link>
+            </div>
             <Link href="/api/auth/signout">
               <div className="p-4 rounded-2xl text-gray-800 text-xl hover:text-blue-800 transition duration-100 ease-in-out hover:shadow-lg">
                 登出
