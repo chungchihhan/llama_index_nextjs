@@ -7,12 +7,12 @@ export async function POST(req: NextRequest, res: NextResponse) {
       const body = await req.json();
       const query = body.query;
       const selectedFolder = body.selectedFolder;
-      const indexFolderName = selectedFolder;
+      const indexFolderName = selectedFolder.replace(".txt", "") + "-index";
+      console.log("indexFolderName: ", indexFolderName);
 
       const storageContext = await storageContextFromDefaults({
-        persistDir: `./PDFstorage/${indexFolderName}`,
+        persistDir: `./TXTstorage/${indexFolderName}`,
       });
-      console.log(storageContext);
 
       const loadedIndex = await VectorStoreIndex.init({
         storageContext: storageContext,

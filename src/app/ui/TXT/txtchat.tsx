@@ -1,24 +1,13 @@
-"use client";
-import {
-  JSXElementConstructor,
-  Key,
-  PromiseLikeOfReactNode,
-  ReactElement,
-  ReactNode,
-  ReactPortal,
-  useState,
-  useEffect,
-} from "react";
-
+import React, { useState, useEffect } from "react";
 import { Button } from "@/app/components/ui/button";
 import { useCopyToClipboard } from "@/app/components/ui/chat/use-copy-to-clipboard";
 import ChatAnswer from "@/app/components/ui/chat/chat-answer";
 import ChatAvatar from "@/app/components/ui/chat/chat-avatar";
-import { Copy, Check } from "lucide-react";
+import { Copy } from "lucide-react";
 import Link from "next/link";
 import Image from "next/image";
 
-export default function Home() {
+export default function TXTChatComponent(): JSX.Element {
   const [isLoading, setIsLoading] = useState(false);
   const [error, setError] = useState<string | null>(null);
   const [chatQuery, setChatQuery] = useState<string>("");
@@ -28,10 +17,28 @@ export default function Home() {
   const [folders, setFolders] = useState([]);
 
   useEffect(() => {
-    const allFiles = localStorage.getItem("allfiles");
-    if (allFiles) {
-      setFolders(JSON.parse(allFiles));
-    }
+    // Initial fetch of 'allfiles' from localStorage
+    const fetchFolders = () => {
+      const allFiles = localStorage.getItem("allfiles");
+      if (allFiles) {
+        setFolders(JSON.parse(allFiles));
+      }
+    };
+
+    fetchFolders(); // Call this function on component mount to load initial folders
+
+    // Event listener for 'allfiles-updated' to refresh folders
+    const handleAllFilesUpdated = () => {
+      console.log("allfiles updated, refreshing folders");
+      fetchFolders();
+    };
+
+    window.addEventListener("allfiles-updated", handleAllFilesUpdated);
+
+    // Cleanup the event listener when the component unmounts
+    return () => {
+      window.removeEventListener("allfiles-updated", handleAllFilesUpdated);
+    };
   }, []);
 
   const handleChat = async () => {
@@ -93,7 +100,7 @@ export default function Home() {
   };
 
   return (
-    <main className="flex min-h-screen flex-col gap-3 p-24 background-gradient">
+    <main className="flex flex-col gap-3 py-24">
       <div className="z-10 w-full items-center justify-between font-mono text-sm lg:flex">
         <div className="fixed bottom-0 left-0 flex h-48 w-full items-end justify-center bg-gradient-to-t from-white via-white dark:from-black dark:via-black lg:static lg:h-auto lg:w-auto lg:bg-none">
           <div className="flex items-center justify-center font-nunito text-lg font-bold gap-4">
@@ -111,23 +118,25 @@ export default function Home() {
           </div>
         </div>
       </div>
-      <div className="flex gap-2">
-        <div className="flex items-center p-2">
-          <ChatAvatar role="user" />
-        </div>
+      <div className="flex items-center p-2 gap-2">
         <select
           value={chooseFolder}
           onChange={(e) => setChooseFolder(e.target.value)}
-          className="border border-gray-300 rounded-lg p-2"
+          className="border border-gray-300 rounded-lg p-2 w-full"
         >
           <option value="">Select a folder</option>
           {folders.map((folder) => (
-            <option key={folder} value={`${folder}index`}>
+            <option key={folder} value={`${folder}`}>
               {folder}
             </option>
           ))}
         </select>
-        <div className="border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-5">
+      </div>
+      <div className="flex gap-2 pr-2">
+        <div className="p-2">
+          <ChatAvatar role="user" />
+        </div>
+        <div className="border border-gray-300 rounded-xl flex flex-grow bg-white gap-1 pr-2">
           <input
             type="text"
             value={chatQuery}
@@ -150,16 +159,21 @@ export default function Home() {
             <Copy className="h-4 w-4" />
           </Button>
           <button
-            className="hover:bg-slate-100 rounded-lg my-2"
+            className="hover:bg-slate-100 rounded-lg h-8 w-8 self-center"
             onClick={handleChat}
           >
-            Start Asking
+            -&gt;
           </button>
         </div>
       </div>
       <div className="pl-2">
-        {chatanswer && <ChatAnswer chatAnswer={chatanswer} role="chatbot" />}
+        {chatanswer && (
+          <div>
+            <ChatAnswer chatAnswer={chatanswer} role="chatbot" />
+          </div>
+        )}
       </div>
+
       {isLoading && <p>Loading...</p>}
       {error && <p className="text-red-500">{error}</p>}
     </main>

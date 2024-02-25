@@ -23,11 +23,11 @@ export async function POST(req: NextRequest) {
     const document = new Document({ text: buffer.toString() });
 
     // 創建存儲索引的文件夾名稱，基於文件名
-    const indexFolderName = filename.replace(".pdf", "") + "index";
+    const indexFolderName = filename.replace(".txt", "") + "-index";
     console.log(indexFolderName);
 
     const storageContext = await storageContextFromDefaults({
-      persistDir: `./PDFstorage/${indexFolderName}`, // 使用文件名作為子文件夾名稱
+      persistDir: `./TXTstorage/${indexFolderName}`, // 使用文件名作為子文件夾名稱
     });
 
     const index = await VectorStoreIndex.fromDocuments([document], {
