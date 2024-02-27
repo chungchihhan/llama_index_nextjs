@@ -46,6 +46,10 @@ export default function TXTChatComponent(): JSX.Element {
       alert("請先輸入問題");
       return;
     }
+    if (!chooseFolder) {
+      alert("請選擇一個文件夾");
+      return;
+    }
     setIsLoading(true);
     setError(null);
     try {
