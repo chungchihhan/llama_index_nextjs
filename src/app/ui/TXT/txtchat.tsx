@@ -162,7 +162,20 @@ export default function TXTChatComponent(): JSX.Element {
             className="hover:bg-slate-100 rounded-lg h-8 w-8 self-center"
             onClick={handleChat}
           >
-            -&gt;
+            <svg
+              xmlns="http://www.w3.org/2000/svg"
+              fill="none"
+              viewBox="0 0 24 24"
+              stroke-width="1.2"
+              stroke="currentColor"
+              className="justify-center flex items-center p-1"
+            >
+              <path
+                stroke-linecap="round"
+                stroke-linejoin="round"
+                d="M13.5 4.5 21 12m0 0-7.5 7.5M21 12H3"
+              />
+            </svg>
           </button>
         </div>
       </div>
