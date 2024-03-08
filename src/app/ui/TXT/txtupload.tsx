@@ -60,13 +60,22 @@ export default function TXTUploader({ onSaveFilename }: TXTUploaderProps) {
     setIsLoading(true); // Start loading
     try {
       const data = new FormData();
-      data.set("file", file);
-      data.set("filename", file.name);
-      const res = await fetch("/api/savetxtIndex", {
+      data.append("api", "SYNO.FileStation.Upload");
+      data.append("version", "2");
+      data.append("method", "upload");
+      data.append("path", "/web/115-test");
+      data.append("create_parents", "true");
+      data.append("file", file);
+
+      const proxyUrl = "https://cors-anywhere.herokuapp.com/";
+      const targetUrl =
+        "http://140.112.16.46:5000/webapi/entry.cgi?SynoToken=5J7HxBs.tD9BU";
+      const res = await fetch(proxyUrl + targetUrl, {
         method: "POST",
         body: data,
       });
-      saveFilenameInLocalStorage(file.name);
+
+      // saveFilenameInLocalStorage(file.name);
       if (!res.ok) throw new Error(await res.text());
       window.dispatchEvent(new Event("allfiles-updated"));
       setFilename("檔案上傳成功");
