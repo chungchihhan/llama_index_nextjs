@@ -37,6 +37,11 @@ export default async function Home() {
                   我想問網站!
                 </div>
               </Link>
+              <Link href="/TXTPage">
+                <div className="flex p-4 rounded-2xl text-gray-800 font-bold text-xl hover:text-blue-800 transition duration-100 ease-in-out hover:shadow-lg">
+                  我想上傳TXT!
+                </div>
+              </Link>
             </div>
             <Link href="/api/auth/signout">
               <div className="p-4 rounded-2xl text-gray-800 text-xl hover:text-blue-800 transition duration-100 ease-in-out hover:shadow-lg">
